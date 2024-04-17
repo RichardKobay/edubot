@@ -335,6 +335,5 @@ const submitForm = () => {
       </div>
       <button type="submit">Enviar respuestas</button>
     </form>
-
   </div>
 </template>
