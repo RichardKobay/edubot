@@ -3,6 +3,7 @@ import {useRoute} from "vue-router";
 import {onMounted, ref} from "vue";
 import axios from "axios";
 import router from "@/router/index.js";
+import Swal from 'sweetalert2'
 
 const topics = ref("")
 const generatedTest = ref();
@@ -76,6 +77,11 @@ const generateTest = () => {
   sendReq2()
 }
 
+
+function returnToMainTest () {
+  location.href = "/exam"
+}
+
 const sendReq2 = async () => {
   try {
     console.log("mandando request")
@@ -96,6 +102,13 @@ const sendReq2 = async () => {
   } catch (error) {
     testFailed.value = true
     console.error('Error sending request:', error);
+    await Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Hubo un error al generar el exámen, favor de actualizar la página",
+      footer: '<a href="/exam">VOLVER AL EXAMEN PRINCIPAL</a>'
+    })
+    location.reload()
   }
 }
 
@@ -126,20 +139,21 @@ const submitForm = () => {
       <span class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"></span>
     </div>
   </div>
+  <h2 v-if="testFailed" class="text-3xl font-bold">Ha ocurrido un error al generar el exámen, favor de actualizar la
+    página</h2>
   <form @submit.prevent="submitForm" v-if="!beforeTest">
-    <div v-for="(pregunta, index) in generatedTest" :key="index">
-      <p>{{ index + 1 }}. {{ pregunta.pregunta }}</p>
+    <div v-for="(pregunta, index) in generatedTest" :key="index" class="mb-5">
+      <p class="text-xl mb-2">{{ index + 1 }}. {{ pregunta.pregunta }}</p>
       <div v-for="(respuesta, rIndex) in pregunta.respuestas" :key="rIndex">
         <input type="radio" :id="'respuesta_' + index + '_' + rIndex" :value="respuesta"
                v-model="selectedAnswers[index]" required>
-        <label :for="'respuesta_' + index + '_' + rIndex">{{ respuesta }}</label>
+        <label class="p-2" :for="'respuesta_' + index + '_' + rIndex">{{ respuesta }}</label>
       </div>
       <hr>
     </div>
-    <button type="submit" class="m-2 text-center bg-green-200 p-1">Enviar respuestas</button>
+    <hr class="border-emerald-800 border-3">
+    <button type="submit" class="m-2 text-center bg-green-200 p-4 font-bold mr-auto ml-auto">Enviar respuestas</button>
   </form>
-  <h2 v-if="testFailed" class="text-3xl font-bold">Ha ocurrido un error al generar el exámen, favor de actualizar la
-    página</h2>
 </template>
 
 <style scoped>

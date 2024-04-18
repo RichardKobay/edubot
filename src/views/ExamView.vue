@@ -322,18 +322,17 @@ const submitForm = () => {
 
 <template>
   <div>
-    <h2 class="text-green-500 text-5xl">Examen</h2>
-
+    <h2 class="font-bold text-5xl text-center">Examen</h2>
     <form @submit.prevent="submitForm">
-      <div v-for="(pregunta, index) in exam" :key="index">
-        <p>{{ index + 1 }}. {{ pregunta.pregunta }}</p>
-        <div v-for="(respuesta, rIndex) in pregunta.respuestas" :key="rIndex">
+      <div v-for="(pregunta, index) in exam" :key="index" class="mb-5">
+        <p class="text-xl mb-2">{{ index + 1 }}. {{ pregunta.pregunta }}</p>
+        <div v-for="(respuesta, rIndex) in pregunta.respuestas" :key="rIndex" class="">
           <input type="radio" :id="'respuesta_' + index + '_' + rIndex" :value="respuesta" v-model="selectedAnswers[index]" required>
-          <label :for="'respuesta_' + index + '_' + rIndex">{{ respuesta }}</label>
+          <label :for="'respuesta_' + index + '_' + rIndex" class="p-2">{{ respuesta }}</label>
         </div>
-        <hr>
       </div>
-      <button type="submit">Enviar respuestas</button>
+      <hr class="border-emerald-800 border-3">
+      <button type="submit" class="m-2 text-center bg-green-200 p-4 font-bold mr-auto ml-auto">Enviar respuestas</button>
     </form>
   </div>
 </template>

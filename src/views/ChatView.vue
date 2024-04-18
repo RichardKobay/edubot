@@ -8,7 +8,8 @@ const messages = ref([]);
 const userResponses = ref([]);
 const inputMsg = ref("");
 const buttonGenerateTest = ref(false);
-const studyTopics = ref("");
+const studyTopics = ref("")
+const thinking = ref(false)
 
 onMounted(async () => {
   const route = useRoute();
@@ -54,18 +55,20 @@ const sendMsg = () => {
 
 const sendReq = async () => {
   try {
+    thinking.value = true
     const model = "gpt-3.5-turbo";
 
     const finalReq = {
       "model": model,
       "messages": messages.value
-    };
+    }
 
 
     const response = await axios.post('http://localhost:8080/request', {
       prompt: JSON.stringify(finalReq)
-    });
+    })
 
+    thinking.value = false
     messages.value.push({"role": "assistant", "content": JSON.stringify(response.data.response)});
     console.log(messages.value)
   } catch (error) {
@@ -95,8 +98,16 @@ const formatMessage = (content) => {
           <p v-html="message.content"></p>
         </div>
       </div>
+      <div v-if="thinking" class="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-2 flex">
+        <div
+            class=" inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+            role="status">
+          <span class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"></span>
+        </div>
+        <p class="">Pensando...</p>
+      </div>
       <div class="flex border-2 border-emerald-800 p-1">
-        <input type="text" name="message" v-model="inputMsg" class="flex-1 m-2 text-center border-2 border-emerald-700 p-1" placeholder="Ingrese su input aquí" @keydown.enter="sendMsg">
+        <input type="text" name="message" v-model="inputMsg" class="flex-1 m-2 border-2 border-emerald-700 p-1" placeholder="Ingrese su input aquí" @keydown.enter="sendMsg">
         <button @click="sendMsg" class="flex-2 m-2 text-center bg-green-200 p-1">Enviar</button>
         <button v-if="buttonGenerateTest" @click="generateNewTest" class="flex-2 m-2 text-center bg-green-200 p-1">Generar nuevo exámen</button>
       </div>
